@@ -13,6 +13,12 @@ from backend.app.schemas.eval_schemas import (
 router = APIRouter(prefix="/datasets", tags=["Datasets"])
 
 
+@router.post("/seed", summary="Seed default Golden Dataset and prompt versions")
+def seed_dataset_endpoint(db: Session = Depends(get_db)):
+    from scripts.seed_golden_dataset import seed_database
+    return seed_database(db)
+
+
 @router.post("", response_model=EvalDatasetResponse, status_code=status.HTTP_201_CREATED)
 def create_dataset(payload: EvalDatasetCreate, db: Session = Depends(get_db)):
     repo = EvalRepository(db)

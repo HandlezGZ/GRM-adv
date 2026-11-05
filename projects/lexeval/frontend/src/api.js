@@ -55,6 +55,7 @@ export const api = {
 
   // Datasets
   getDatasets: () => request('/datasets'),
+  seedGoldenDataset: () => request('/datasets/seed', { method: 'POST' }),
   getDataset: (id) => {
     if (!id || !id.trim()) return Promise.reject(new Error('ID do dataset não fornecido.'));
     return request(`/datasets/${encodeURIComponent(id.trim())}`);

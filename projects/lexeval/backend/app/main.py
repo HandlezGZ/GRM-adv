@@ -12,6 +12,13 @@ from backend.app.db.session import Base, engine
 async def lifespan(app: FastAPI):
     # Ensure database tables exist
     Base.metadata.create_all(bind=engine)
+    try:
+        from scripts.seed_golden_dataset import seed_database
+        from backend.app.db.session import SessionLocal
+        with SessionLocal() as db:
+            seed_database(db)
+    except Exception:
+        pass
     yield
 
 

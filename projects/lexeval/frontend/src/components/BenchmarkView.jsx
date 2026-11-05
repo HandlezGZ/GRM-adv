@@ -14,6 +14,7 @@ import {
   Sliders,
   Sparkles,
   RefreshCw,
+  Database,
 } from 'lucide-react';
 
 export default function BenchmarkView({ initialDatasetId }) {
@@ -34,6 +35,7 @@ export default function BenchmarkView({ initialDatasetId }) {
   const [runDetail, setRunDetail] = useState(null);
   const [error, setError] = useState(null);
   const [expandedCases, setExpandedCases] = useState({});
+  const [seeding, setSeeding] = useState(false);
 
   useEffect(() => {
     loadPrerequisites();
@@ -56,6 +58,19 @@ export default function BenchmarkView({ initialDatasetId }) {
       setError('Falha ao carregar datasets e prompts: ' + err.message);
     } finally {
       setLoadingInitial(false);
+    }
+  };
+
+  const handleSeed = async () => {
+    try {
+      setSeeding(true);
+      setError(null);
+      await api.seedGoldenDataset();
+      await loadPrerequisites();
+    } catch (err) {
+      setError('Falha ao carregar Golden Dataset: ' + err.message);
+    } finally {
+      setSeeding(false);
     }
   };
 
@@ -149,7 +164,18 @@ export default function BenchmarkView({ initialDatasetId }) {
               {loadingInitial ? (
                 <div className="text-xs text-slate-500 font-mono py-2">Carregando datasets...</div>
               ) : datasets.length === 0 ? (
-                <div className="text-xs text-rose-400 py-2">Nenhum dataset cadastrado</div>
+                <div className="space-y-2 py-1">
+                  <div className="text-xs text-slate-400">Nenhum dataset cadastrado</div>
+                  <button
+                    type="button"
+                    onClick={handleSeed}
+                    disabled={seeding}
+                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-medium text-white transition-colors"
+                  >
+                    <Database className="w-3.5 h-3.5" />
+                    <span>{seeding ? 'Carregando...' : 'Carregar Golden Dataset'}</span>
+                  </button>
+                </div>
               ) : (
                 <select
                   value={selectedDatasetId}

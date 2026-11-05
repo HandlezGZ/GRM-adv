@@ -22,6 +22,7 @@ export default function DatasetsView() {
   const [loadingCases, setLoadingCases] = useState(false);
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
+  const [seeding, setSeeding] = useState(false);
 
   // Tabs: 'cases' or 'add_case' or 'add_dataset'
   const [activeSubTab, setActiveSubTab] = useState('cases');
@@ -98,6 +99,21 @@ export default function DatasetsView() {
     await loadDatasets(selectedDatasetId);
     if (selectedDatasetId) {
       await loadCases(selectedDatasetId);
+    }
+  };
+
+  const handleSeedDataset = async () => {
+    try {
+      setSeeding(true);
+      setError(null);
+      setSuccessMsg(null);
+      await api.seedGoldenDataset();
+      setSuccessMsg('Golden Dataset padrão (10 casos STJ/STF) carregado com sucesso!');
+      await loadDatasets();
+    } catch (err) {
+      setError('Falha ao restaurar Golden Dataset: ' + err.message);
+    } finally {
+      setSeeding(false);
     }
   };
 
@@ -240,7 +256,18 @@ export default function DatasetsView() {
             {loadingDatasets ? (
               <div className="text-xs text-slate-500 font-mono py-2">Carregando datasets...</div>
             ) : datasets.length === 0 ? (
-              <div className="text-xs text-slate-400 py-2">Nenhum dataset cadastrado. Crie um novo abaixo.</div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 rounded-lg border border-indigo-900/40 bg-indigo-950/20 text-xs">
+                <span className="text-slate-300">Nenhum dataset cadastrado no banco.</span>
+                <button
+                  type="button"
+                  onClick={handleSeedDataset}
+                  disabled={seeding}
+                  className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-medium text-white transition-colors shrink-0"
+                >
+                  <Database className="w-3.5 h-3.5" />
+                  <span>{seeding ? 'Carregando...' : 'Carregar Golden Dataset Padrão'}</span>
+                </button>
+              </div>
             ) : (
               <select
                 value={selectedDatasetId}
