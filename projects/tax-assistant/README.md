@@ -8,7 +8,7 @@ LexTax is a domain-specialized artificial intelligence platform designed for ing
 
 ```text
                                   ┌─────────────────────────────┐
-                                  │ Streamlit Web UI (Port 8503)│
+                                  │ React 18 Web UI (Port 8503) │
                                   └──────────────┬──────────────┘
                                                  │ HTTP / REST
                                                  
@@ -116,7 +116,7 @@ make seed
 # Start FastAPI backend (port 8002)
 make run-backend
 
-# Start Streamlit application (port 8503)
+# Start React 18 + Vite frontend (port 8503)
 make run-frontend
 ```
 
@@ -130,7 +130,7 @@ The backend exposes interactive documentation at `http://localhost:8002/docs`.
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/health` | Service health status and version |
+| `GET` | `/health` ou `/api/v1/health` | Service health status and version |
 | `POST` | `/api/v1/documents/upload` | Multipart PDF upload and chunking |
 | `POST` | `/api/v1/documents/text` | Direct raw text intake for testing |
 | `GET` | `/api/v1/documents` | Catalog listing with filters |
@@ -144,12 +144,15 @@ The backend exposes interactive documentation at `http://localhost:8002/docs`.
 
 ---
 
-## 6. Streamlit User Interface (Port 8503)
+## 6. React 18 User Interface (Port 8503)
 
-- **Home (`app.py`):** Central document intake, portfolio KPI metrics cards (total assessment value, page counter, confidence score), and document catalog.
-- **Page 1 (`1_Visualizador_e_Extracao.py`):** Side-by-side comparative viewer displaying raw paginated text alongside structured fiscal entities (CNPJ, taxpayer, debts, articles).
-- **Page 2 (`2_Resumo_Executivo.py`):** Executive summary, procedural timeline (30-day defense window), and exportable Markdown memorandum.
-- **Page 3 (`3_Chat_com_Fontes.py`):** Grounded chat interface with accordion components displaying verbatim citations and source page numbers.
+Built with React 18, Vite, Tailwind CSS, and Lucide Icons (zero emojis):
+
+- **Dashboard:** Portfolio exposure KPI cards (Total Assessed Debt, Principal, Penalties, Interest), document taxonomy distribution, and recent activity.
+- **Documentos & Ingestão:** Drag-and-drop file uploader supporting `.pdf` and `.txt` with automated parsing, hashing, and processing status.
+- **Visualizador & Entidades:** Side-by-side inspection of paginated document chunks alongside structured metadata (CNPJ, taxpayer, authorities, taxes, amounts, statutory articles).
+- **Resumo Executivo & Prazos:** Executive memorandum with procedural timelines (+30 days administrative defense under Decree 70.235/1972 or state law) and financial exposure scoring.
+- **Chat com Documentos (Grounded Q&A):** Conversational interface powered by BM25 retrieval, exact page citations, and zero-hallucination guardrail.
 
 ---
 
@@ -159,5 +162,5 @@ Deploy backend and frontend services using Docker Compose:
 ```bash
 docker compose up --build -d
 ```
-- Backend API available at: `http://localhost:8002`
-- Streamlit UI available at: `http://localhost:8503`
+- Backend API available at: `http://localhost:8002/docs`
+- React Frontend available at: `http://localhost:8503`

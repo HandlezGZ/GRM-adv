@@ -16,7 +16,7 @@ Deploying generative models in high-stakes domains like law and taxation require
   - *Answer Relevance:* Lexical similarity and mandatory keyword coverage against reference standards.
 - **A/B Testing & Regression Detection:** Automated comparison between baseline prompts and candidate versions, categorizing outcomes into *Gains*, *Regressions*, and *Ties*.
 - **Failure Catalog & Diagnostics:** Audit registry storing all defective model outputs, categorized by root cause (`HALLUCINATED_CITATION`, `HALLUCINATED_NUMERICAL_VALUE`, `FORBIDDEN_TERM_VIOLATION`, `UNGROUNDED_CLAIM`, `SCHEMA_ERROR`).
-- **Interactive Multi-Page Streamlit Dashboard:** Operational interface with KPI metric cards, quality trends, failure browsers, and dataset editors.
+- **Interactive React 18 Dashboard:** Modern interface with KPI metric cards, quality trends, failure browsers, prompt comparison, and dataset editors (Vite + Tailwind CSS + Lucide Icons).
 
 ---
 
@@ -24,7 +24,7 @@ Deploying generative models in high-stakes domains like law and taxation require
 
 ```text
 ┌────────────────────────────────────────────────────────┐
-│             Streamlit Web Dashboard (Port 8502)        │
+│            React 18 Web Dashboard (Port 8502)          │
 │  [Overview]  [Run Benchmark]  [A/B Test]  [Failures]   │
 └──────────────────────────┬─────────────────────────────┘
                            │ (HTTP REST / JSON)
@@ -63,8 +63,9 @@ Deploying generative models in high-stakes domains like law and taxation require
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/health` | Service health status and version |
+| `GET` | `/health` ou `/api/v1/health` | Service health status and version |
 | `POST` | `/api/v1/datasets` | Create a new evaluation golden dataset |
+| `POST` | `/api/v1/datasets/seed` | Seed default Golden Dataset and prompt versions |
 | `GET` | `/api/v1/datasets` | List all datasets with test case counts |
 | `GET` | `/api/v1/datasets/{id}/cases` | List all test cases in a dataset |
 | `POST` | `/api/v1/datasets/{id}/cases` | Add a new test case to a dataset |
@@ -83,6 +84,7 @@ Deploying generative models in high-stakes domains like law and taxation require
 
 ### 5.1 Prerequisites
 - Python `>= 3.11`
+- Node.js `>= 18` (for React frontend)
 - SQLite 3 or PostgreSQL
 - Docker & Docker Compose (optional)
 
@@ -95,19 +97,22 @@ cd projects/lexeval
 # Install dependencies in editable mode
 pip install -e .[dev]
 
+# Install React frontend dependencies
+cd frontend && npm install && cd ..
+
 # Seed golden tax dataset and prompt versions
 make seed
 
 # Run the backend API server (port 8001)
 make run-backend
 
-# In a separate terminal, launch the Streamlit frontend (port 8502)
+# In a separate terminal, launch the React frontend (port 8502)
 make run-frontend
 ```
 
 Once running, access:
-- **Streamlit Dashboard:** [http://localhost:8502](http://localhost:8502)
-- **FastAPI Interactive Docs (Swagger):** [http://localhost:8001/api/v1/docs](http://localhost:8001/api/v1/docs)
+- **React Dashboard:** [http://localhost:8502](http://localhost:8502)
+- **FastAPI Interactive Docs (Swagger):** [http://localhost:8001/docs](http://localhost:8001/docs)
 
 ### 5.3 Docker Compose Execution
 

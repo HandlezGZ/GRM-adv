@@ -15,7 +15,7 @@ O **LexFlow** resolve esse gargalo através de um fluxo digital integrado:
 - **Resiliência e Fallback Automático:** Caso o provedor de IA apresente indisponibilidade, erro de rede ou timeout, o sistema aciona instantaneamente o motor de regras locais, registrando o incidente para auditoria sem interromper o serviço.
 - **Revisão Humana ("Human-in-the-Loop"):** A IA atua como assistente de triagem; os analistas operacionais têm autoridade total para revisar, confirmar ou ajustar categorias, equipes e prioridades com registro formal de justificativa.
 - **Workflow com Máquina de Estados:** Controle estrito de transições (`NEW`  `TRIAGE`  `IN_PROGRESS`  `WAITING`  `RESOLVED` / `CANCELLED`) com registro imutável de eventos (`RequestEvent`).
-- **Dashboard Operacional:** Interface interativa em Streamlit com métricas de volumetria, distribuição por categoria/prioridade e monitoramento de qualidade.
+- **Dashboard Operacional:** Interface moderna em React 18 + Vite com métricas de volumetria, distribuição por categoria/prioridade e monitoramento de qualidade.
 
 ---
 
@@ -31,10 +31,10 @@ O **LexFlow** resolve esse gargalo através de um fluxo digital integrado:
 ## 3. Arquitetura e Tecnologias
 
 ```
-[Streamlit UI - Frontend]
+[React 18 + Vite UI - Frontend (Port 8501)]
        │
         (HTTP / REST JSON)
-[FastAPI REST API - Backend]
+[FastAPI REST API - Backend (Port 8000)]
        │
        ├── [Workflow Service - Máquina de Estados]
        │
@@ -51,8 +51,8 @@ O **LexFlow** resolve esse gargalo através de um fluxo digital integrado:
 
 - **Backend:** Python 3.12+, FastAPI, Pydantic v2, Pydantic-Settings.
 - **Persistência:** SQLAlchemy 2.0 (SQLite para desenvolvimento ágil / PostgreSQL para produção).
-- **Frontend:** Streamlit com componentes analíticos e interface multi-página.
-- **Qualidade de Código:** Ruff (linter e formatador) e Pytest (31 testes automatizados).
+- **Frontend:** React 18, Vite, Tailwind CSS, Lucide Icons.
+- **Qualidade de Código:** Ruff (linter e formatador backend) e Pytest (31 testes automatizados).
 - **Containerização:** Docker Compose para orquestração de backend e frontend.
 
 ---
@@ -69,12 +69,13 @@ O **LexFlow** resolve esse gargalo através de um fluxo digital integrado:
 
 2. **Instalar as dependências:**
    ```bash
-   pip install -r backend/requirements.txt -r frontend/requirements.txt
+   pip install -r backend/requirements.txt
+   cd frontend && npm install && cd ..
    ```
 
 3. **Popular o banco com dados de demonstração:**
    ```bash
-   python scripts/seed_demo_data.py
+   PYTHONPATH=. python scripts/seed_demo_data.py
    ```
 
 4. **Iniciar o Backend (FastAPI):**
@@ -83,10 +84,10 @@ O **LexFlow** resolve esse gargalo através de um fluxo digital integrado:
    ```
    *Documentação interativa Swagger:* [http://localhost:8000/docs](http://localhost:8000/docs)
 
-5. **Iniciar o Frontend (Streamlit) em outro terminal:**
+5. **Iniciar o Frontend (React + Vite) em outro terminal:**
    ```bash
-   source .venv/bin/activate
-   streamlit run frontend/app.py --server.port 8501
+   cd frontend
+   npm run dev  # porta 8501
    ```
    *Acesso à interface web:* [http://localhost:8501](http://localhost:8501)
 
@@ -97,7 +98,7 @@ O **LexFlow** resolve esse gargalo através de um fluxo digital integrado:
 ```bash
 docker compose up --build -d
 ```
-- **Frontend (Streamlit):** [http://localhost:8501](http://localhost:8501)
+- **Frontend (React 18):** [http://localhost:8501](http://localhost:8501)
 - **Backend API (Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
@@ -108,10 +109,10 @@ O projeto conta com **31 testes automatizados** cobrindo integração de endpoin
 
 ```bash
 # Executar a suíte de testes
-pytest backend/tests -v
+PYTHONPATH=. pytest backend/tests -v
 
-# Executar verificação de linting
-ruff check backend frontend scripts
+# Executar verificação de linting no backend
+ruff check backend scripts
 ```
 
 ---
@@ -159,9 +160,12 @@ GRM-adv/
 │   │   └── services/            # Classificadores (Rules, LLM) e Workflow
 │   └── tests/                   # Testes unitários e de integração
 ├── frontend/
-│   ├── app.py                   # Dashboard principal Streamlit
-│   ├── pages/                   # Páginas da aplicação web
-│   └── utils.py                 # Cliente de integração com a API
+│   ├── src/                     # Componentes React 18 (Dashboard, Intake, Review)
+│   │   ├── components/          # Telas e modais
+│   │   ├── api.js               # Cliente de integração com a API REST
+│   │   └── App.jsx              # Aplicação e roteamento
+│   ├── package.json             # Dependências Node.js
+│   └── vite.config.js           # Configuração do Vite e Tailwind CSS
 ├── scripts/
 │   └── seed_demo_data.py        # Carga inicial de dados
 ├── docker-compose.yml           # Orquestração de containers
