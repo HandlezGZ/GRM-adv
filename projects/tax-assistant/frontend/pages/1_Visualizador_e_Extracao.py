@@ -2,9 +2,9 @@ import streamlit as st
 
 from frontend.api_client import api_client
 
-st.set_page_config(page_title="Visualizador & Extração | LexTax", page_icon="📑", layout="wide")
+st.set_page_config(page_title="Visualizador & Extração | LexTax", page_icon=None, layout="wide")
 
-st.title("📑 Visualizador e Extração Estruturada")
+st.title(" Visualizador e Extração Estruturada")
 st.caption("Visão comparativa entre o texto integral paginado e as entidades tributárias extraídas deterministicamente.")
 
 # Load available documents
@@ -35,7 +35,7 @@ if not doc:
 # Action bar
 col_act1, col_act2 = st.columns([1, 4])
 with col_act1:
-    if st.button("🔄 Reprocessar Extração", use_container_width=True):
+    if st.button(" Reprocessar Extração", use_container_width=True):
         with st.spinner("Extraindo entidades..."):
             api_client.extract_document(doc_id, force=True)
             st.success("Extração reprocessada com sucesso!")
@@ -48,7 +48,7 @@ st.divider()
 col_left, col_right = st.columns([1.1, 0.9])
 
 with col_left:
-    st.subheader(f"📄 Texto Integral ({doc['total_pages']} páginas, {len(doc.get('chunks', []))} chunks)")
+    st.subheader(f" Texto Integral ({doc['total_pages']} páginas, {len(doc.get('chunks', []))} chunks)")
     st.text_area(
         "Conteúdo extraído:",
         value=doc["raw_text"],
@@ -57,7 +57,7 @@ with col_left:
     )
 
 with col_right:
-    st.subheader("📊 Entidades Fiscais Estruturadas")
+    st.subheader(" Entidades Fiscais Estruturadas")
     if not extraction:
         st.info("Nenhuma extração gerada.")
     else:
@@ -75,7 +75,7 @@ with col_right:
         )
 
         # Values Breakdown
-        st.markdown("##### 💰 Decomposição do Crédito Tributário")
+        st.markdown("#####  Decomposição do Crédito Tributário")
         val_total = extraction.get("valor_total", 0.0)
         val_princ = extraction.get("valor_principal", 0.0)
         val_multa = extraction.get("valor_multa", 0.0)
@@ -90,7 +90,7 @@ with col_right:
             st.metric("Juros Selic/Mora", f"R$ {val_juros:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
 
         # Taxes and Dates
-        st.markdown("##### 🏷️ Tributos e Competência")
+        st.markdown("#####  Tributos e Competência")
         tributos = extraction.get("tributos_identificados", [])
         if tributos:
             st.write(" ".join([f"`{t}`" for t in tributos]))
@@ -99,12 +99,12 @@ with col_right:
 
         d_col1, d_col2 = st.columns(2)
         with d_col1:
-            st.write(f"📅 **Data Intimação:** {extraction.get('data_intimacao') or 'Não informada'}")
+            st.write(f" **Data Intimação:** {extraction.get('data_intimacao') or 'Não informada'}")
         with d_col2:
-            st.write(f"⏰ **Vencimento:** {extraction.get('data_vencimento') or 'Não informado'}")
+            st.write(f" **Vencimento:** {extraction.get('data_vencimento') or 'Não informado'}")
 
         # Legal Citations
-        st.markdown("##### ⚖️ Dispositivos Legais Invocados")
+        st.markdown("#####  Dispositivos Legais Invocados")
         arts = extraction.get("dispositivos_legais", [])
         if arts:
             for art in arts:

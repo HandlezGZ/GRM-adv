@@ -28,13 +28,13 @@ Deploying generative models in high-stakes domains like law and taxation require
 │  [Overview]  [Run Benchmark]  [A/B Test]  [Failures]   │
 └──────────────────────────┬─────────────────────────────┘
                            │ (HTTP REST / JSON)
-                           ▼
+                           
 ┌────────────────────────────────────────────────────────┐
 │               FastAPI Backend (Port 8001)              │
 │  /health  /api/v1/datasets  /api/v1/prompts  /eval     │
 └──────────────┬──────────────────────────┬──────────────┘
                │                          │
-               ▼                          ▼
+                                         
 ┌──────────────────────────────┐ ┌──────────────────────────────┐
 │       Evaluation Engine      │ │       Persistence Layer      │
 │ ├── DeterministicEvaluator   │ │ ├── SQLAlchemy ORM           │

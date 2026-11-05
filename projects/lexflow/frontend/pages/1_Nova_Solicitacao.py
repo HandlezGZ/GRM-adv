@@ -1,9 +1,9 @@
 import streamlit as st
 from utils import classify_request, create_request
 
-st.set_page_config(page_title="Nova Solicitação | LexFlow", page_icon="📝", layout="wide")
+st.set_page_config(page_title="Nova Solicitação | LexFlow", page_icon=None, layout="wide")
 
-st.title("📝 Nova Solicitação Interna")
+st.title(" Nova Solicitação Interna")
 st.caption("Cadastre uma necessidade operacional para triagem automatizada.")
 
 CATEGORIES = [
@@ -67,7 +67,7 @@ with st.form("form_nova_solicitacao", clear_on_submit=False):
             success, res = create_request(payload)
             if success:
                 req_id = res["id"]
-                st.success(f"✅ Solicitação cadastrada com sucesso! Protocolo: `{req_id}`")
+                st.success(f" Solicitação cadastrada com sucesso! Protocolo: `{req_id}`")
 
                 if auto_classify:
                     with st.spinner("Executando motor de classificação..."):
@@ -75,14 +75,14 @@ with st.form("form_nova_solicitacao", clear_on_submit=False):
                         if c_success:
                             c_data = c_res.get("result", {})
                             st.info(
-                                f"🤖 **Classificação Automática Realizada:**\n"
+                                f" **Classificação Automática Realizada:**\n"
                                 f"- **Categoria:** `{c_data.get('category')}`\n"
                                 f"- **Equipe:** `{c_data.get('team')}`\n"
                                 f"- **Confiança:** {c_data.get('confidence')}\n"
                                 f"- **Justificativa:** {c_data.get('reason')}"
                             )
                             if c_res.get("warning"):
-                                st.warning(f"⚠️ {c_res['warning']}")
+                                st.warning(f" {c_res['warning']}")
                         else:
                             st.warning(f"A solicitação foi criada, mas a classificação automática falhou: {c_res}")
             else:

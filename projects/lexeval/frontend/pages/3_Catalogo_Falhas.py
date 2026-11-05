@@ -1,9 +1,9 @@
 import streamlit as st
 from utils import get_datasets, get_failures
 
-st.set_page_config(page_title="Catálogo de Falhas | LexEval", page_icon="🚨", layout="wide")
+st.set_page_config(page_title="Catálogo de Falhas | LexEval", page_icon=None, layout="wide")
 
-st.title("🚨 Catálogo de Falhas e Incidentes de IA")
+st.title(" Catálogo de Falhas e Incidentes de IA")
 st.caption(
     "Auditoria detalhada de alucinações fáticas, citações jurídicas espúrias, violações de formato "
     "e quebras de guardrails."
@@ -47,20 +47,20 @@ else:
         title = f.get("test_case_title", "Caso sem título")
 
         with st.container():
-            st.markdown(f"### ⚠️ `{reason}` — {title}")
+            st.markdown(f"###  `{reason}` — {title}")
             st.caption(f"Dataset: **{f.get('dataset_name')}** | Modelo: `{f.get('model_name')}` | Data: {f.get('created_at')[:19]}")
 
             col_gen, col_exp = st.columns(2)
 
             with col_gen:
-                st.markdown("**❌ Resposta Gerada (Com Defeito):**")
+                st.markdown("** Resposta Gerada (Com Defeito):**")
                 st.warning(f.get("generated_output", ""))
 
             with col_exp:
-                st.markdown("**✅ Gabarito / Resposta Esperada:**")
+                st.markdown("** Gabarito / Resposta Esperada:**")
                 st.success(f.get("expected_output", ""))
 
-            with st.expander("📄 Ver Documento de Contexto e Diagnóstico Completo"):
+            with st.expander(" Ver Documento de Contexto e Diagnóstico Completo"):
                 st.markdown("**Documento de Contexto Jurídico:**")
                 st.text(f.get("context_snippet", ""))
 

@@ -14,7 +14,7 @@ O **LexFlow** resolve esse gargalo através de um fluxo digital integrado:
 - **Integração Opcional com IA (`LLMClassifier`):** Suporte a modelos generativos com saída estritamente estruturada em JSON e validação contra schema tipado.
 - **Resiliência e Fallback Automático:** Caso o provedor de IA apresente indisponibilidade, erro de rede ou timeout, o sistema aciona instantaneamente o motor de regras locais, registrando o incidente para auditoria sem interromper o serviço.
 - **Revisão Humana ("Human-in-the-Loop"):** A IA atua como assistente de triagem; os analistas operacionais têm autoridade total para revisar, confirmar ou ajustar categorias, equipes e prioridades com registro formal de justificativa.
-- **Workflow com Máquina de Estados:** Controle estrito de transições (`NEW` ➔ `TRIAGE` ➔ `IN_PROGRESS` ➔ `WAITING` ➔ `RESOLVED` / `CANCELLED`) com registro imutável de eventos (`RequestEvent`).
+- **Workflow com Máquina de Estados:** Controle estrito de transições (`NEW`  `TRIAGE`  `IN_PROGRESS`  `WAITING`  `RESOLVED` / `CANCELLED`) com registro imutável de eventos (`RequestEvent`).
 - **Dashboard Operacional:** Interface interativa em Streamlit com métricas de volumetria, distribuição por categoria/prioridade e monitoramento de qualidade.
 
 ---
@@ -33,7 +33,7 @@ O **LexFlow** resolve esse gargalo através de um fluxo digital integrado:
 ```
 [Streamlit UI - Frontend]
        │
-       ▼ (HTTP / REST JSON)
+        (HTTP / REST JSON)
 [FastAPI REST API - Backend]
        │
        ├── [Workflow Service - Máquina de Estados]
@@ -45,7 +45,7 @@ O **LexFlow** resolve esse gargalo através de um fluxo digital integrado:
        │
        ├── [Audit & Event Logger]
        │
-       ▼ (SQLAlchemy ORM)
+        (SQLAlchemy ORM)
 [Banco de Dados - SQLite / PostgreSQL]
 ```
 

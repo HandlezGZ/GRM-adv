@@ -10,11 +10,11 @@ from utils import (
 
 st.set_page_config(
     page_title="Detalhes e Revisão | LexFlow",
-    page_icon="🔍",
+    page_icon=None,
     layout="wide",
 )
 
-st.title("🔍 Detalhes e Revisão Humana")
+st.title(" Detalhes e Revisão Humana")
 st.caption("Acompanhe o workflow, inspecione eventos e assuma o controle humano da triagem.")
 
 # Fetch recent requests for easy selection
@@ -43,7 +43,7 @@ if not req:
 col_main, col_audit = st.columns([3, 2])
 
 with col_main:
-    st.subheader(f"📌 {req['title']}")
+    st.subheader(f" {req['title']}")
     st.write(f"**Descrição:** {req['description']}")
 
     # Info chips
@@ -57,7 +57,7 @@ with col_main:
     conf_val = req.get("classification_confidence")
     conf_display = f"{conf_val:.2f}" if conf_val is not None else "N/A"
 
-    badge = "🤖 Automática (Regras/IA)" if c_source != "human" else "👤 Revisada por Humano"
+    badge = " Automática (Regras/IA)" if c_source != "human" else " Revisada por Humano"
     st.info(
         f"**Origem:** {badge} | **Confiança:** {conf_display}\n\n"
         f"**Justificativa:** {req.get('classification_reason') or 'Sem justificativa registrada.'}"
@@ -66,7 +66,7 @@ with col_main:
     st.divider()
 
     # Classification Action
-    if st.button("⚡ Executar Classificação Automática (Regras/IA)", use_container_width=True):
+    if st.button(" Executar Classificação Automática (Regras/IA)", use_container_width=True):
         with st.spinner("Classificando solicitação..."):
             ok, res = classify_request(target_id)
             if ok:
@@ -78,7 +78,7 @@ with col_main:
     st.divider()
 
     # Workflow Status Transitions
-    st.write("#### 🔄 Atualizar Status do Workflow")
+    st.write("####  Atualizar Status do Workflow")
     current_status = req["status"]
 
     transitions_map = {
@@ -111,7 +111,7 @@ with col_main:
     st.divider()
 
     # Human-in-the-Loop Review Panel
-    st.write("#### 🛡️ Painel de Revisão Humana (Human-in-the-Loop)")
+    st.write("####  Painel de Revisão Humana (Human-in-the-Loop)")
     st.caption("O analista pode corrigir a sugestão da IA. A validação humana se torna definitiva e auditável.")
 
     CATEGORIES_REV = [
@@ -174,15 +174,15 @@ with col_main:
                     st.error(f"Erro ao salvar revisão: {res}")
 
 with col_audit:
-    st.subheader("📜 Trilha de Auditoria (Eventos)")
+    st.subheader(" Trilha de Auditoria (Eventos)")
     events = get_request_events(target_id)
     if not events:
         st.info("Nenhum evento registrado até o momento.")
     else:
         for ev in reversed(events):
-            actor_icon = "👤" if ev["actor"] == "human" else ("🤖" if ev["actor"] == "system" else "📝")
+            actor_label = "Humano" if ev["actor"] == "human" else ("Sistema" if ev["actor"] == "system" else ev["actor"])
             with st.container(border=True):
-                st.markdown(f"**{actor_icon} {ev['event_type']}** | `{ev['actor']}`")
+                st.markdown(f"**[{actor_label}] {ev['event_type']}** | `{ev['actor']}`")
                 st.write(ev["summary"])
                 st.caption(f"Horário UTC: {ev['created_at'][:19].replace('T', ' ')}")
                 if ev.get("metadata_json"):

@@ -1,9 +1,9 @@
 import streamlit as st
 from utils import compare_runs, get_eval_runs
 
-st.set_page_config(page_title="Comparador A/B | LexEval", page_icon="🔍", layout="wide")
+st.set_page_config(page_title="Comparador A/B | LexEval", page_icon=None, layout="wide")
 
-st.title("🔍 Comparador e Versionador de Prompts (A/B Testing)")
+st.title(" Comparador e Versionador de Prompts (A/B Testing)")
 st.caption(
     "Avalie o impacto de alterações em prompts e modelos: identifique regressões silenciosas, "
     "ganhos de acurácia fática e variações de relevância."
@@ -25,7 +25,7 @@ else:
     with col_b:
         run_b_id = st.selectbox("Candidato — Execução B", options=list(run_options.keys()), index=0, format_func=lambda x: run_options[x])
 
-    if st.button("⚖️ Executar Análise Comparativa A/B", type="primary"):
+    if st.button(" Executar Análise Comparativa A/B", type="primary"):
         with st.spinner("Analisando regressões e variações caso a caso..."):
             comp = compare_runs(run_a_id, run_b_id)
 
@@ -33,17 +33,17 @@ else:
                 st.error("Falha ao obter dados comparativos.")
             else:
                 st.markdown("---")
-                st.subheader("📊 Veredito da Análise")
+                st.subheader(" Veredito da Análise")
 
                 verdict = comp.get("verdict")
                 if verdict == "POSITIVE_PROGRESSION":
-                    st.success("🏆 **PROGRESSÃO POSITIVA:** O candidato B superou o baseline A sem regressões críticas detectadas.")
+                    st.success(" **PROGRESSÃO POSITIVA:** O candidato B superou o baseline A sem regressões críticas detectadas.")
                 elif verdict == "CRITICAL_REGRESSION":
-                    st.error("🛑 **REGRESSÃO CRÍTICA DETECTADA:** O candidato B introduziu falhas ou teve desempenho inferior ao baseline.")
+                    st.error(" **REGRESSÃO CRÍTICA DETECTADA:** O candidato B introduziu falhas ou teve desempenho inferior ao baseline.")
                 elif verdict == "MODERATE_IMPROVEMENT":
-                    st.warning("⚠️ **MELHORIA MODERADA:** Ganhos superaram perdas, mas requer atenção a casos específicos.")
+                    st.warning(" **MELHORIA MODERADA:** Ganhos superaram perdas, mas requer atenção a casos específicos.")
                 else:
-                    st.info("⚖️ **EQUIVALENTE:** Desempenho neutro ou sem deltas estatisticamente significativos.")
+                    st.info(" **EQUIVALENTE:** Desempenho neutro ou sem deltas estatisticamente significativos.")
 
                 # KPI Deltas
                 k1, k2, k3, k4, k5 = st.columns(5)
@@ -58,7 +58,7 @@ else:
                 k5.metric("Empates / Consistentes", comp.get("ties_count", 0))
 
                 st.markdown("---")
-                st.subheader("🔬 Análise Caso a Caso")
+                st.subheader(" Análise Caso a Caso")
 
                 filter_status = st.radio(
                     "Filtrar casos por status:",
@@ -74,7 +74,7 @@ else:
                     if filter_status == "Somente Ganhos" and status != "GAIN":
                         continue
 
-                    status_icon = "🟢 GAIN" if status == "GAIN" else ("🔴 REGRESSION" if status == "REGRESSION" else "⚪ TIE")
+                    status_icon = " GAIN" if status == "GAIN" else (" REGRESSION" if status == "REGRESSION" else " TIE")
                     with st.expander(f"{status_icon} — {item.get('title')}"):
                         st.write(f"**Diagnóstico:** {item.get('notes')}")
                         sc1, sc2, sc3 = st.columns(3)

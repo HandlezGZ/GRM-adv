@@ -2,9 +2,9 @@ import pandas as pd
 import streamlit as st
 from utils import get_health, list_failures
 
-st.set_page_config(page_title="Qualidade e Falhas | LexFlow", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="Qualidade e Falhas | LexFlow", page_icon=None, layout="wide")
 
-st.title("🛡️ Qualidade, Resiliência e Auditoria de Falhas")
+st.title(" Qualidade, Resiliência e Auditoria de Falhas")
 st.caption(
     "Monitoramento de falhas de provedores de IA, timeouts e rastreabilidade de fallback determinístico."
 )
@@ -22,12 +22,12 @@ c3.metric("Ambiente", health.get("environment", "N/A") if health else "N/A")
 
 st.divider()
 
-st.subheader("📋 Registro de Falhas do Modelo (Classificação)")
+st.subheader(" Registro de Falhas do Modelo (Classificação)")
 
 failures = list_failures()
 
 if not failures:
-    st.success("🎉 Nenhuma falha de classificação registrada no momento. O sistema está estável!")
+    st.success(" Nenhuma falha de classificação registrada no momento. O sistema está estável!")
 else:
     st.warning(f"Foram identificadas **{len(failures)}** tentativa(s) de classificação com erro ou timeout.")
 
@@ -48,7 +48,7 @@ else:
 
 st.divider()
 
-st.subheader("💡 Como funciona a Política de Fallback no LexFlow?")
+st.subheader(" Como funciona a Política de Fallback no LexFlow?")
 st.markdown("""
 1. **Zero Downtime:** Quando o provedor LLM (OpenAI ou compatível) sofre timeout, erro de rede ou retorna JSON fora do schema, a requisição **não é descartada**.
 2. **Fallback Determinístico Automático:** O sistema aciona instantaneamente o classificador por regras (`RulesClassifier`), que analisa o texto de forma local e segura.

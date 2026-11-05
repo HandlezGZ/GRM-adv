@@ -2,9 +2,9 @@ import streamlit as st
 
 from frontend.api_client import api_client
 
-st.set_page_config(page_title="Resumo Executivo | LexTax", page_icon="📝", layout="wide")
+st.set_page_config(page_title="Resumo Executivo | LexTax", page_icon=None, layout="wide")
 
-st.title("📝 Resumo Executivo e Linha do Tempo Processual")
+st.title(" Resumo Executivo e Linha do Tempo Processual")
 st.caption("Síntese jurídica da autuação, cálculo de contingência e prazos decadenciais/preclusivos.")
 
 docs = api_client.list_documents()
@@ -75,16 +75,16 @@ with card_col3:
     )
 
 st.write("")
-st.subheader("🎯 Tese de Acusação Fiscal")
+st.subheader(" Tese de Acusação Fiscal")
 st.info(summary.get("tese_acusacao", "Não identificada."))
 
-st.subheader("📋 Memorando Resumido Completo")
+st.subheader(" Memorando Resumido Completo")
 resumo_text = summary.get("resumo_texto", "")
 st.markdown(resumo_text)
 
 # Download button
 st.download_button(
-    label="📥 Baixar Memorando em Markdown",
+    label=" Baixar Memorando em Markdown",
     data=resumo_text,
     file_name=f"memorando_{summary.get('filename', 'resumo')}.md",
     mime="text/markdown",

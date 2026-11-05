@@ -3,12 +3,12 @@ from utils import get_dashboard_metrics, get_health
 
 st.set_page_config(
     page_title="LexEval | AI Quality & Evaluation Platform",
-    page_icon="⚖️",
+    page_icon=None,
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-st.title("⚖️ LexEval — Continuous AI Evaluation & Quality Monitoring")
+st.title(" LexEval — Continuous AI Evaluation & Quality Monitoring")
 st.caption(
     "Plataforma de benchmarking contínuo, verificação de fidelidade fática, detecção de alucinações "
     "e observabilidade para IA Jurídica."
@@ -16,18 +16,18 @@ st.caption(
 
 health = get_health()
 if health.get("status") == "healthy":
-    st.sidebar.success("🟢 API Conectada (Port 8001)")
+    st.sidebar.success(" API Conectada (Port 8001)")
 else:
-    st.sidebar.warning(f"⚠️ API Offline / Inacessível: {health.get('status')}")
+    st.sidebar.warning(f" API Offline / Inacessível: {health.get('status')}")
 
 st.sidebar.markdown("---")
 st.sidebar.info(
     "**Navegação:**\n"
-    "- 📊 **Dashboard Geral** (Home)\n"
-    "- 🚀 **Executar Avaliação**\n"
-    "- 🔍 **Comparador A/B**\n"
-    "- 🚨 **Catálogo de Falhas**\n"
-    "- 📚 **Golden Datasets**"
+    "-  **Dashboard Geral** (Home)\n"
+    "-  **Executar Avaliação**\n"
+    "-  **Comparador A/B**\n"
+    "-  **Catálogo de Falhas**\n"
+    "-  **Golden Datasets**"
 )
 
 metrics = get_dashboard_metrics()
@@ -72,7 +72,7 @@ else:
     left_col, right_col = st.columns([3, 2])
 
     with left_col:
-        st.subheader("📈 Histórico de Qualidade por Execução")
+        st.subheader(" Histórico de Qualidade por Execução")
         recent_runs = metrics.get("recent_runs", [])
         if recent_runs:
             chart_data = []
@@ -90,17 +90,17 @@ else:
             st.write("Sem dados de séries temporais.")
 
     with right_col:
-        st.subheader("🚨 Distribuição de Falhas")
+        st.subheader(" Distribuição de Falhas")
         failures_by_reason = metrics.get("failures_by_reason", {})
         if failures_by_reason:
             st.bar_chart(failures_by_reason)
         else:
-            st.success("🎉 Nenhuma falha crítica detectada nas execuções recentes!")
+            st.success(" Nenhuma falha crítica detectada nas execuções recentes!")
 
     st.markdown("---")
 
     # 3. Recent Runs Table
-    st.subheader("📋 Execuções Recentes de Benchmark")
+    st.subheader(" Execuções Recentes de Benchmark")
     if recent_runs:
         table_rows = []
         for r in recent_runs:

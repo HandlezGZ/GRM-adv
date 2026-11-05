@@ -2,9 +2,9 @@ import pandas as pd
 import streamlit as st
 from utils import list_requests
 
-st.set_page_config(page_title="Solicitações | LexFlow", page_icon="📋", layout="wide")
+st.set_page_config(page_title="Solicitações | LexFlow", page_icon=None, layout="wide")
 
-st.title("📋 Solicitações Cadastradas")
+st.title(" Solicitações Cadastradas")
 st.caption("Consulte, filtre e acompanhe o fluxo de triagem interna.")
 
 # Filters
@@ -63,5 +63,5 @@ else:
     st.dataframe(df, use_container_width=True, hide_index=True)
 
     st.divider()
-    st.write("##### 🔍 Ação Rápida")
+    st.write("#####  Ação Rápida")
     st.info("Para visualizar o histórico completo ou revisar a classificação de uma solicitação, acerte o ID na página **Detalhes e Revisão** no menu lateral.")

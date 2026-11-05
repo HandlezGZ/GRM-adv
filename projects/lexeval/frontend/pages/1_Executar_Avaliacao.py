@@ -1,9 +1,9 @@
 import streamlit as st
 from utils import get_datasets, get_eval_run_detail, get_prompts, trigger_evaluation
 
-st.set_page_config(page_title="Executar Avaliação | LexEval", page_icon="🚀", layout="wide")
+st.set_page_config(page_title="Executar Avaliação | LexEval", page_icon="", layout="wide")
 
-st.title("🚀 Disparo de Avaliação em Lote (Batch Eval Run)")
+st.title(" Disparo de Avaliação em Lote (Batch Eval Run)")
 st.caption(
     "Execute baterias de testes automatizados com validação determinística, "
     "fidelidade factual e juiz IA."
@@ -46,7 +46,7 @@ else:
         with col_thresh:
             threshold = st.slider("Limiar de Aprovação (Threshold)", min_value=0.50, max_value=0.95, value=0.70, step=0.05)
 
-        submitted = st.form_submit_button("⚡ Iniciar Bateria de Avaliação", type="primary")
+        submitted = st.form_submit_button(" Iniciar Bateria de Avaliação", type="primary")
 
     if submitted:
         with st.spinner("Executando avaliação caso a caso contra o contexto fático..."):
@@ -70,7 +70,7 @@ else:
                 m4.metric("Duração", f"{res['duration_ms']:.0f} ms")
 
                 st.markdown("---")
-                st.subheader("📑 Resultados Detalhados por Caso de Teste")
+                st.subheader(" Resultados Detalhados por Caso de Teste")
 
                 # Fetch full results with diagnostics
                 run_detail = get_eval_run_detail(res["id"])
@@ -78,7 +78,7 @@ else:
 
                 for r in results:
                     passed = r.get("passed", False)
-                    badge = "✅ APROVADO" if passed else f"❌ REPROVADO ({r.get('failure_reason', 'FALHA')})"
+                    badge = " APROVADO" if passed else f" REPROVADO ({r.get('failure_reason', 'FALHA')})"
                     title = r.get("test_case_title") or f"Caso {r.get('test_case_id')[:8]}"
 
                     with st.expander(f"{badge} — {title}"):

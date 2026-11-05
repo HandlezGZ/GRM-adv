@@ -4,12 +4,12 @@ from utils import get_health, get_metrics
 
 st.set_page_config(
     page_title="LexFlow | Automação e Triagem Interna",
-    page_icon="⚖️",
+    page_icon=None,
     layout="wide",
 )
 
 # Header
-st.title("⚖️ LexFlow")
+st.title(" LexFlow")
 st.caption(
     "Sistema de Triagem e Automação de Solicitações Internas"
 )
@@ -18,13 +18,13 @@ st.caption(
 health = get_health()
 if health:
     st.success(
-        f"🟢 **API Online:** {health.get('service')} v{health.get('version')} "
+        f" **API Online:** {health.get('service')} v{health.get('version')} "
         f"| Modo: `{health.get('classification_mode')}` "
         f"| Ambiente: `{health.get('environment')}`"
     )
 else:
     st.error(
-        "🔴 **Backend Offline:** Verifique se o servidor FastAPI está ativo em `http://localhost:8000`."
+        " **Backend Offline:** Verifique se o servidor FastAPI está ativo em `http://localhost:8000`."
     )
 
 st.divider()
@@ -41,9 +41,9 @@ if metrics:
     c5.metric("Falhas de IA Registradas", metrics.get("ai_failure_count", 0))
 
     if metrics.get("avg_resolution_hours") is not None:
-        st.info(f"⏱️ **Tempo Médio de Resolução:** {metrics['avg_resolution_hours']} horas")
+        st.info(f" **Tempo Médio de Resolução:** {metrics['avg_resolution_hours']} horas")
 
-    st.subheader("📊 Distribuição Operacional")
+    st.subheader(" Distribuição Operacional")
     col_left, col_right = st.columns(2)
 
     with col_left:
@@ -74,7 +74,7 @@ else:
 st.divider()
 
 st.markdown("""
-### 🧭 Navegação Rápida
+###  Navegação Rápida
 - **[Nova Solicitação](/Nova_Solicitacao):** Registre uma demanda operacional interna com validação em tempo real.
 - **[Solicitações](/Solicitacoes):** Consulte, busque e filtre todos os chamados cadastrados.
 - **[Detalhes e Revisão](/Detalhes_e_Revisao):** Visualize o histórico, altere status e realize a revisão humana ("Human-in-the-loop").

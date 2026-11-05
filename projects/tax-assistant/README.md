@@ -11,7 +11,7 @@ LexTax is a domain-specialized artificial intelligence platform designed for ing
                                   │ Streamlit Web UI (Port 8503)│
                                   └──────────────┬──────────────┘
                                                  │ HTTP / REST
-                                                 ▼
+                                                 
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐
 │                                FastAPI Backend (Port 8002)                              │
 │                                                                                         │
@@ -21,7 +21,7 @@ LexTax is a domain-specialized artificial intelligence platform designed for ing
 │  │   SHA-256 validation)  │      │  + LLM Schema Fallback) │   │  Deadlines Timeline)│  │
 │  └───────────┬────────────┘      └────────────┬────────────┘   └──────────┬──────────┘  │
 │              │                                │                           │             │
-│              ▼                                ▼                           ▼             │
+│                                                                                      │
 │  ┌───────────────────────────────────────────────────────────────────────────────────┐  │
 │  │                        Grounded RAG & Retrieval Engine                            │  │
 │  │     - BM25 Token Ranking over Context Chunks                                      │  │
@@ -30,7 +30,7 @@ LexTax is a domain-specialized artificial intelligence platform designed for ing
 │  └───────────────────────────────────────────┬───────────────────────────────────────┘  │
 └──────────────────────────────────────────────┼──────────────────────────────────────────┘
                                                │ SQLAlchemy ORM
-                                               ▼
+                                               
                                   ┌─────────────────────────────┐
                                   │   SQLite Database (lextax.db) │
                                   │ TaxDocument, DocumentChunk, │

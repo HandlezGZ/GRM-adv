@@ -1,9 +1,9 @@
 import streamlit as st
 from utils import create_test_case, get_dataset_cases, get_datasets
 
-st.set_page_config(page_title="Golden Datasets | LexEval", page_icon="📚", layout="wide")
+st.set_page_config(page_title="Golden Datasets | LexEval", page_icon="", layout="wide")
 
-st.title("📚 Gerenciador de Golden Datasets & Casos de Teste")
+st.title(" Gerenciador de Golden Datasets & Casos de Teste")
 st.caption(
     "Gerenciamento e curadoria de gabaritos jurídicos sintéticos, documentos de contexto "
     "e critérios estritos de aceitação."
@@ -17,7 +17,7 @@ else:
     ds_map = {d["id"]: f"{d['name']} [{d.get('category', 'GERAL')}] ({d.get('test_cases_count', 0)} casos)" for d in datasets}
     selected_ds = st.selectbox("Selecione o Dataset", options=list(ds_map.keys()), format_func=lambda x: ds_map[x])
 
-    tab_cases, tab_add = st.tabs(["📋 Casos de Teste Cadastrados", "➕ Adicionar Novo Caso"])
+    tab_cases, tab_add = st.tabs([" Casos de Teste Cadastrados", " Adicionar Novo Caso"])
 
     with tab_cases:
         cases = get_dataset_cases(selected_ds)

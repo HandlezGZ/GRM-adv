@@ -2,9 +2,9 @@ import streamlit as st
 
 from frontend.api_client import api_client
 
-st.set_page_config(page_title="Chat Fundamentado | LexTax", page_icon="💬", layout="wide")
+st.set_page_config(page_title="Chat Fundamentado | LexTax", page_icon=None, layout="wide")
 
-st.title("💬 Consulta Interativa com Fontes Obrigatórias")
+st.title(" Consulta Interativa com Fontes Obrigatórias")
 st.caption("Q&A ancorado estritamente no documento fiscal. Cada resposta apresenta trechos verbatim e número da página de suporte.")
 
 docs = api_client.list_documents()
@@ -36,7 +36,7 @@ if session_key not in st.session_state:
 active_session_id = st.session_state.get(session_key)
 
 # Suggested questions
-st.markdown("##### 💡 Sugestões de Perguntas Rápidas:")
+st.markdown("#####  Sugestões de Perguntas Rápidas:")
 sug_col1, sug_col2, sug_col3, sug_col4 = st.columns(4)
 selected_query = None
 
@@ -63,7 +63,7 @@ if active_session_id:
             st.markdown(msg["content"])
             citations = msg.get("citations") or []
             if citations and msg["role"] == "assistant":
-                with st.expander(f"📚 Fontes e Citações Verbatim do Documento ({len(citations)} trechos localizados)"):
+                with st.expander(f" Fontes e Citações Verbatim do Documento ({len(citations)} trechos localizados)"):
                     for idx, cit in enumerate(citations, start=1):
                         st.markdown(
                             f"""
@@ -88,7 +88,7 @@ if query_to_send and active_session_id:
                 st.markdown(response["answer"])
                 citations = response.get("citations") or []
                 if citations:
-                    with st.expander(f"📚 Fontes e Citações Verbatim ({len(citations)} trechos localizados)"):
+                    with st.expander(f" Fontes e Citações Verbatim ({len(citations)} trechos localizados)"):
                         for idx, cit in enumerate(citations, start=1):
                             st.markdown(
                                 f"""
