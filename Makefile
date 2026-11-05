@@ -4,9 +4,9 @@ PYTHON := $(if $(VENV),$(VENV)/bin/python,python3)
 PYTEST := $(if $(VENV),$(VENV)/bin/pytest,pytest)
 RUFF := $(if $(VENV),$(VENV)/bin/ruff,ruff)
 UVICORN := $(if $(VENV),$(VENV)/bin/uvicorn,uvicorn)
-STREAMLIT := $(if $(VENV),$(VENV)/bin/streamlit,streamlit)
+NODE_BIN := $(shell if [ -d $(ROOT_DIR)/../.node/bin ]; then echo $(ROOT_DIR)/../.node/bin; elif [ -d $(HOME)/.local/share/mise/installs/node/latest/bin ]; then echo $(HOME)/.local/share/mise/installs/node/latest/bin; else echo ""; fi)
 
-.PHONY: install-all test-all lint-all seed-all \
+.PHONY: install-all test-all lint-all seed-all build-frontends \
 	test-lexflow seed-lexflow run-lexflow-backend run-lexflow-frontend \
 	test-lexeval seed-lexeval run-lexeval-backend run-lexeval-frontend \
 	test-tax-assistant seed-tax run-tax-backend run-tax-frontend \
@@ -14,17 +14,26 @@ STREAMLIT := $(if $(VENV),$(VENV)/bin/streamlit,streamlit)
 
 install-all:
 	$(PYTHON) -m pip install -r $(ROOT_DIR)/projects/lexflow/backend/requirements.txt \
-		-r $(ROOT_DIR)/projects/lexflow/frontend/requirements.txt \
-		-r $(ROOT_DIR)/projects/lexeval/pyproject.toml \
-		-r $(ROOT_DIR)/projects/tax-assistant/requirements.txt
+		-r $(ROOT_DIR)/projects/tax-assistant/requirements.txt \
+		-r $(ROOT_DIR)/projects/lexeval/pyproject.toml
+	cd $(ROOT_DIR)/projects/lexflow/frontend && PATH="$(NODE_BIN):$$PATH" npm install
+	cd $(ROOT_DIR)/projects/lexeval/frontend && PATH="$(NODE_BIN):$$PATH" npm install
+	cd $(ROOT_DIR)/projects/tax-assistant/frontend && PATH="$(NODE_BIN):$$PATH" npm install
 
-test-all: test-lexflow test-lexeval test-tax-assistant
+test-all: test-lexflow test-lexeval test-tax-assistant build-frontends
 	@echo "=========================================================="
-	@echo "All 3 monorepo test suites executed successfully!"
+	@echo "All 3 backend test suites and all 3 React frontend builds"
+	@echo "executed successfully with zero errors!"
 	@echo "=========================================================="
+
+build-frontends:
+	@echo "==> Building React frontends..."
+	cd $(ROOT_DIR)/projects/lexflow/frontend && PATH="$(NODE_BIN):$$PATH" ./node_modules/.bin/vite build
+	cd $(ROOT_DIR)/projects/lexeval/frontend && PATH="$(NODE_BIN):$$PATH" ./node_modules/.bin/vite build
+	cd $(ROOT_DIR)/projects/tax-assistant/frontend && PATH="$(NODE_BIN):$$PATH" ./node_modules/.bin/vite build
 
 lint-all:
-	@echo "==> Running Ruff check across all projects..."
+	@echo "==> Running Ruff check across all backend projects..."
 	$(RUFF) check $(ROOT_DIR)/projects/
 
 seed-all: seed-lexflow seed-lexeval seed-tax
@@ -34,7 +43,7 @@ seed-all: seed-lexflow seed-lexeval seed-tax
 # Project 1: LexFlow (Process Automation & Request Triage)
 # -------------------------------------------------------------
 test-lexflow:
-	@echo "==> [LexFlow] Running test suite..."
+	@echo "==> [LexFlow] Running backend test suite..."
 	cd $(ROOT_DIR)/projects/lexflow && PYTHONPATH=. $(PYTEST) backend/tests -v
 
 seed-lexflow:
@@ -45,13 +54,13 @@ run-lexflow-backend:
 	cd $(ROOT_DIR)/projects/lexflow && PYTHONPATH=. $(UVICORN) backend.app.main:app --reload --host 0.0.0.0 --port 8000
 
 run-lexflow-frontend:
-	cd $(ROOT_DIR)/projects/lexflow && $(STREAMLIT) run frontend/app.py --server.port 8501
+	cd $(ROOT_DIR)/projects/lexflow/frontend && PATH="$(NODE_BIN):$$PATH" ./node_modules/.bin/vite --port 8501 --host
 
 # -------------------------------------------------------------
 # Project 2: LexEval (AI Quality & Hallucination Monitoring)
 # -------------------------------------------------------------
 test-lexeval:
-	@echo "==> [LexEval] Running test suite..."
+	@echo "==> [LexEval] Running backend test suite..."
 	cd $(ROOT_DIR)/projects/lexeval && PYTHONPATH=. $(PYTEST) backend/tests -v
 
 seed-lexeval:
@@ -62,13 +71,13 @@ run-lexeval-backend:
 	cd $(ROOT_DIR)/projects/lexeval && PYTHONPATH=. $(UVICORN) backend.app.main:app --reload --host 0.0.0.0 --port 8001
 
 run-lexeval-frontend:
-	cd $(ROOT_DIR)/projects/lexeval && $(STREAMLIT) run frontend/app.py --server.port 8502
+	cd $(ROOT_DIR)/projects/lexeval/frontend && PATH="$(NODE_BIN):$$PATH" ./node_modules/.bin/vite --port 8502 --host
 
 # -------------------------------------------------------------
 # Project 3: LexTax (Tax Document Analysis & Grounded Q&A)
 # -------------------------------------------------------------
 test-tax-assistant:
-	@echo "==> [LexTax] Running test suite..."
+	@echo "==> [LexTax] Running backend test suite..."
 	cd $(ROOT_DIR)/projects/tax-assistant && PYTHONPATH=. $(PYTEST) backend/tests -v
 
 seed-tax:
@@ -79,7 +88,7 @@ run-tax-backend:
 	cd $(ROOT_DIR)/projects/tax-assistant && PYTHONPATH=. $(UVICORN) backend.app.main:app --reload --host 0.0.0.0 --port 8002
 
 run-tax-frontend:
-	cd $(ROOT_DIR)/projects/tax-assistant && $(STREAMLIT) run frontend/app.py --server.port 8503
+	cd $(ROOT_DIR)/projects/tax-assistant/frontend && PATH="$(NODE_BIN):$$PATH" ./node_modules/.bin/vite --port 8503 --host
 
 # -------------------------------------------------------------
 # Docker Orchestration
