@@ -29,5 +29,70 @@ services:
       - lexflow-backend
     restart: unless-stopped
 
+  # Project 2: LexEval (AI Quality & Hallucination Monitoring)
+  lexeval-backend:
+    build:
+      context: projects/lexeval
+      dockerfile: Dockerfile
+    container_name: lexeval-backend
+    command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8001
+    ports:
+      - "8001:8001"
+    environment:
+      - DATABASE_URL=sqlite:///./lexeval.db
+      - FASTAPI_PORT=8001
+      - API_V1_STR=/api/v1
+    volumes:
+      - lexeval_data:/app
+    restart: unless-stopped
+
+  lexeval-frontend:
+    build:
+      context: projects/lexeval
+      dockerfile: Dockerfile
+    container_name: lexeval-frontend
+    command: streamlit run frontend/app.py --server.port 8502 --server.address 0.0.0.0
+    ports:
+      - "8502:8502"
+    environment:
+      - BACKEND_URL=http://lexeval-backend:8001
+      - STREAMLIT_PORT=8502
+    depends_on:
+      - lexeval-backend
+    restart: unless-stopped
+
+  # Project 3: LexTax / Tax Assistant (Tax Document Analysis & Grounded Q&A)
+  tax-assistant-backend:
+    build:
+      context: projects/tax-assistant
+      dockerfile: Dockerfile
+    container_name: lextax-backend
+    command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8002
+    ports:
+      - "8002:8002"
+    environment:
+      - ENVIRONMENT=production
+      - API_PORT=8002
+      - DATABASE_URL=sqlite:///./lextax.db
+    volumes:
+      - lextax_data:/app
+    restart: unless-stopped
+
+  tax-assistant-frontend:
+    build:
+      context: projects/tax-assistant
+      dockerfile: Dockerfile
+    container_name: lextax-frontend
+    command: streamlit run frontend/app.py --server.port 8503 --server.address 0.0.0.0
+    ports:
+      - "8503:8503"
+    environment:
+      - API_BASE_URL=http://tax-assistant-backend:8002/api/v1
+    depends_on:
+      - tax-assistant-backend
+    restart: unless-stopped
+
 volumes:
   lexflow_data:
+  lexeval_data:
+  lextax_data:
