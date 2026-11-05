@@ -1,5 +1,7 @@
 services:
+  # -------------------------------------------------------------
   # Project 1: LexFlow (Process Automation & Request Triage)
+  # -------------------------------------------------------------
   lexflow-backend:
     build:
       context: projects/lexflow
@@ -18,24 +20,25 @@ services:
 
   lexflow-frontend:
     build:
-      context: projects/lexflow
-      dockerfile: frontend/Dockerfile
+      context: projects/lexflow/frontend
+      dockerfile: Dockerfile
     container_name: lexflow-frontend
     ports:
       - "8501:8501"
     environment:
-      - BACKEND_URL=http://lexflow-backend:8000
+      - VITE_API_URL=http://localhost:8000/api/v1
     depends_on:
       - lexflow-backend
     restart: unless-stopped
 
+  # -------------------------------------------------------------
   # Project 2: LexEval (AI Quality & Hallucination Monitoring)
+  # -------------------------------------------------------------
   lexeval-backend:
     build:
       context: projects/lexeval
-      dockerfile: Dockerfile
+      dockerfile: backend/Dockerfile
     container_name: lexeval-backend
-    command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8001
     ports:
       - "8001:8001"
     environment:
@@ -48,26 +51,25 @@ services:
 
   lexeval-frontend:
     build:
-      context: projects/lexeval
+      context: projects/lexeval/frontend
       dockerfile: Dockerfile
     container_name: lexeval-frontend
-    command: streamlit run frontend/app.py --server.port 8502 --server.address 0.0.0.0
     ports:
       - "8502:8502"
     environment:
-      - BACKEND_URL=http://lexeval-backend:8001
-      - STREAMLIT_PORT=8502
+      - VITE_API_URL=http://localhost:8001/api/v1
     depends_on:
       - lexeval-backend
     restart: unless-stopped
 
-  # Project 3: LexTax / Tax Assistant (Tax Document Analysis & Grounded Q&A)
+  # -------------------------------------------------------------
+  # Project 3: LexTax (Tax Document Analysis & Grounded Q&A)
+  # -------------------------------------------------------------
   tax-assistant-backend:
     build:
       context: projects/tax-assistant
-      dockerfile: Dockerfile
+      dockerfile: backend/Dockerfile
     container_name: lextax-backend
-    command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8002
     ports:
       - "8002:8002"
     environment:
@@ -80,14 +82,13 @@ services:
 
   tax-assistant-frontend:
     build:
-      context: projects/tax-assistant
+      context: projects/tax-assistant/frontend
       dockerfile: Dockerfile
     container_name: lextax-frontend
-    command: streamlit run frontend/app.py --server.port 8503 --server.address 0.0.0.0
     ports:
       - "8503:8503"
     environment:
-      - API_BASE_URL=http://tax-assistant-backend:8002/api/v1
+      - VITE_API_URL=http://localhost:8002/api/v1
     depends_on:
       - tax-assistant-backend
     restart: unless-stopped
