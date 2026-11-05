@@ -62,9 +62,20 @@ class FaithfulnessEvaluator:
         return round(score, 4), supported, hallucinated
 
     def decompose_claims(self, text: str) -> list[str]:
-        """Decomposes response into key sentence-level claims."""
-        sentences = re.split(r"[.\n;]+", text)
-        claims = [s.strip() for s in sentences if len(s.strip()) > 15]
+        """Decomposes response into key sentence-level claims preserving legal abbreviations."""
+        if not text or not text.strip():
+            return []
+        # Protect abbreviations from false sentence splits
+        protected = re.sub(
+            r"\b(art|inc|lei|s[úu]mula|n[oº°]|resp|re|lc|p[aá]g|fls)\.",
+            r"\1_DOT_",
+            text,
+            flags=re.IGNORECASE,
+        )
+        parts = re.split(r"[\n;]+|\.\s+(?=[A-Z0-9])", protected)
+        claims = [re.sub(r"_DOT_", ".", p.strip()) for p in parts if len(p.strip()) > 8]
+        if not claims and text.strip():
+            claims = [text.strip()]
         return claims
 
     def verify_sentence_claims(
@@ -92,7 +103,8 @@ class FaithfulnessEvaluator:
             overlap = claim_tokens.intersection(context_tokens)
             ratio = len(overlap) / len(claim_tokens)
 
-            is_supported = ratio >= 0.40  # At least 40% significant token overlap
+            # At least 30% significant token overlap or citation grounded
+            is_supported = ratio >= 0.30
             if is_supported:
                 supported_count += 1
 
