@@ -11,7 +11,7 @@ st.set_page_config(
 # Header
 st.title("⚖️ LexFlow")
 st.caption(
-    "Sistema Interno de Triagem e Automação de Solicitações | GRM Advogados (Demonstração)"
+    "Sistema de Triagem e Automação de Solicitações Internas"
 )
 
 # Health Status Banner
