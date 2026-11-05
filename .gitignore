@@ -65,3 +65,4 @@ dist/
 .worktrees/
 **/.worktrees/
 
+node_modules
