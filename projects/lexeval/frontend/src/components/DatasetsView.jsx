@@ -64,8 +64,11 @@ export default function DatasetsView() {
       setDatasets(data || []);
 
       if (data && data.length > 0) {
-        const targetId = selectId || selectedDatasetId || data[0].id;
+        const targetId = selectId || (data.some((d) => d.id === selectedDatasetId) ? selectedDatasetId : data[0].id);
         setSelectedDatasetId(targetId);
+      } else {
+        setSelectedDatasetId('');
+        setTestCases([]);
       }
     } catch (err) {
       setError('Falha ao carregar datasets: ' + err.message);
@@ -75,6 +78,10 @@ export default function DatasetsView() {
   };
 
   const loadCases = async (dsId) => {
+    if (!dsId) {
+      setTestCases([]);
+      return;
+    }
     try {
       setLoadingCases(true);
       setError(null);
@@ -84,6 +91,13 @@ export default function DatasetsView() {
       setError('Falha ao carregar casos de teste: ' + err.message);
     } finally {
       setLoadingCases(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    await loadDatasets(selectedDatasetId);
+    if (selectedDatasetId) {
+      await loadCases(selectedDatasetId);
     }
   };
 
@@ -301,11 +315,11 @@ export default function DatasetsView() {
               Casos de Teste do Dataset
             </h2>
             <button
-              onClick={() => loadCases(selectedDatasetId)}
-              disabled={loadingCases}
+              onClick={handleRefresh}
+              disabled={loadingCases || loadingDatasets}
               className="inline-flex items-center space-x-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${loadingCases ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${loadingCases || loadingDatasets ? 'animate-spin' : ''}`} />
               <span>Atualizar</span>
             </button>
           </div>

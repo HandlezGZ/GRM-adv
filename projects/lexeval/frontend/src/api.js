@@ -37,17 +37,17 @@ async function request(endpoint, options = {}) {
 }
 
 export const api = {
-  // Health: attempts root /health and /api/v1/health gracefully
+  // Health: attempts root /health first for universal compatibility, fallback to /api/v1/health
   getHealth: async () => {
     try {
-      const res = await fetch(`${API_V1}/health`, { signal: AbortSignal.timeout(2500) });
-      if (res.ok) return await res.json();
+      const resRoot = await fetch(`${ROOT_URL}/health`, { signal: AbortSignal.timeout(2500) });
+      if (resRoot.ok) return await resRoot.json();
     } catch {
-      // try root /health
+      // try /api/v1/health fallback
     }
-    const resRoot = await fetch(`${ROOT_URL}/health`, { signal: AbortSignal.timeout(2500) });
-    if (!resRoot.ok) throw new Error(`Health error: ${resRoot.status}`);
-    return await resRoot.json();
+    const res = await fetch(`${API_V1}/health`, { signal: AbortSignal.timeout(2500) });
+    if (!res.ok) throw new Error(`Health error: ${res.status}`);
+    return await res.json();
   },
 
   // Dashboard
@@ -55,16 +55,25 @@ export const api = {
 
   // Datasets
   getDatasets: () => request('/datasets'),
-  getDataset: (id) => request(`/datasets/${id}`),
+  getDataset: (id) => {
+    if (!id || !id.trim()) return Promise.reject(new Error('ID do dataset não fornecido.'));
+    return request(`/datasets/${encodeURIComponent(id.trim())}`);
+  },
   createDataset: (data) => request('/datasets', {
     method: 'POST',
     body: JSON.stringify(data),
   }),
-  getDatasetCases: (datasetId) => request(`/datasets/${datasetId}/cases`),
-  createTestCase: (datasetId, data) => request(`/datasets/${datasetId}/cases`, {
-    method: 'POST',
-    body: JSON.stringify(data),
-  }),
+  getDatasetCases: (datasetId) => {
+    if (!datasetId || !datasetId.trim()) return Promise.resolve([]);
+    return request(`/datasets/${encodeURIComponent(datasetId.trim())}/cases`);
+  },
+  createTestCase: (datasetId, data) => {
+    if (!datasetId || !datasetId.trim()) return Promise.reject(new Error('ID do dataset não fornecido.'));
+    return request(`/datasets/${encodeURIComponent(datasetId.trim())}/cases`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
 
   // Prompts
   getPrompts: () => request('/prompts'),
