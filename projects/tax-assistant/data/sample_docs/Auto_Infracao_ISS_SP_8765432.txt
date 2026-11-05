@@ -1,0 +1,37 @@
+PREFEITURA DO MUNICÍPIO DE SÃO PAULO
+SECRETARIA MUNICIPAL DA FAZENDA - SF/SP
+SUBSECRETARIA DA RECEITA MUNICIPAL - SUREM
+DEPARTAMENTO DE FISCALIZAÇÃO TRIBUTÁRIA
+
+AUTO DE INFRAÇÃO E INTIMAÇÃO - ISS Nº 8.765.432-1
+DATA DA LAVRATURA: 25/10/2026
+DATA DA INTIMAÇÃO: 04/11/2026
+DATA DE VENCIMENTO: 04/12/2026
+
+1. IDENTIFICAÇÃO DO SUJEITO PASSIVO
+AUTUADO: TECH CONSULTORIA E SERVIÇOS DIGITAIS LTDA.
+CNPJ: 12.345.678/0001-90
+INSCRIÇÃO MUNICIPAL (CCM): 5.890.123-4
+ENDEREÇO: Avenida Brigadeiro Faria Lima, nº 3.477, Itaim Bibi, São Paulo/SP - CEP 04538-133
+
+2. DESCRIÇÃO DOS FATOS E RELATÓRIO FISCAL
+Em procedimento de auditoria tributária incidente sobre as Notas Fiscais Eletrônicas de Serviços (NFS-e) emitidas entre janeiro de 2024 e dezembro de 2024, constatou-se a falta de recolhimento tempestivo do Imposto Sobre Serviços de Qualquer Natureza (ISSQN) sobre os serviços de licenciamento de software customizado e suporte técnico correlato (subitem 1.05 da Lista de Serviços anexa à Lei Municipal nº 13.701/2003).
+
+A fiscalização constatou que a contribuinte aplicou indevidamente a alíquota reduzida de 2%, quando a legislação paulistana exige a incidência da alíquota regular de 5% para atividades de consultoria e suporte em tecnologia combinadas sem benefício fiscal homologado.
+
+3. DISCRIMINAÇÃO DOS DÉBITOS
+TRIBUTO: ISS (Imposto Sobre Serviços)
+PERÍODO DE APURAÇÃO: 01/2024 a 12/2024
+VALOR PRINCIPAL: R$ 220.000,00
+MULTA PUNITIVA DE OFÍCIO (50%): R$ 110.000,00
+JUROS DE MORA E CORREÇÃO MONETÁRIA (IPCA): R$ 12.150,00
+VALOR TOTAL DO LANÇAMENTO: R$ 342.150,00
+
+4. FUNDAMENTAÇÃO LEGAL
+- Art. 1º, Art. 7º e Art. 16 da Lei Municipal nº 13.701/2003;
+- Art. 8º da Lei Complementar Federal nº 116/2003;
+- Arts. 142 e 161 do Código Tributário Nacional (CTN).
+
+5. INTIMAÇÃO E PRAZOS RECURSAIS
+Fica o sujeito passivo intimado a pagar a quantia de R$ 342.150,00 ou apresentar Impugnação Administrativa de Primeira Instância perante a Junta de Julgamento Tributário (JJT) no prazo improrrogável de 30 (trinta) dias contados da ciência desta intimação (data final: 04/12/2026).
+O pagamento integral efetuado no prazo de até 30 dias ensejará a redução de 50% no valor da multa moratória.

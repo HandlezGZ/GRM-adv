@@ -35,6 +35,12 @@ router = APIRouter(prefix="/requests", tags=["Requests"])
     status_code=status.HTTP_201_CREATED,
     summary="Cadastrar nova solicitação",
 )
+@router.post(
+    "/",
+    response_model=RequestResponse,
+    status_code=status.HTTP_201_CREATED,
+    include_in_schema=False,
+)
 def create_request(
     payload: RequestCreate,
     repo: RequestRepository = Depends(get_request_repo),
@@ -55,6 +61,11 @@ def create_request(
     "",
     response_model=RequestListResponse,
     summary="Listar e filtrar solicitações",
+)
+@router.get(
+    "/",
+    response_model=RequestListResponse,
+    include_in_schema=False,
 )
 def list_requests(
     status_filter: RequestStatus | None = Query(

@@ -1,7 +1,9 @@
 import { SAMPLE_DOCUMENTS } from './utils/sampleData';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8002/api/v1';
-const ROOT_URL = BASE_URL.replace(/\/api\/v1\/?$/, '');
+const RAW_URL = import.meta.env.VITE_API_URL || 'http://localhost:8002';
+const ROOT_URL = RAW_URL.replace(/\/api\/v1\/?$/, '');
+const API_V1 = `${ROOT_URL}/api/v1`;
+const BASE_URL = API_V1;
 
 // In-memory fallback repository when backend is unreachable or during simulation
 const localStore = {

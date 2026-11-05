@@ -1,20 +1,26 @@
 // LexFlow API Client
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const API_V1 = `${BASE_URL}/api/v1`;
+const RAW_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const ROOT_URL = RAW_URL.replace(/\/api\/v1\/?$/, '');
+const API_V1 = `${ROOT_URL}/api/v1`;
 
 /**
  * Check backend health
  */
 export async function getHealth() {
   try {
-    const res = await fetch(`${BASE_URL}/health`, { signal: AbortSignal.timeout(3000) });
-    if (!res.ok) throw new Error(`Health error: ${res.status}`);
-    return await res.json();
+    const res = await fetch(`${API_V1}/health`, { signal: AbortSignal.timeout(3000) });
+    if (res.ok) return await res.json();
+  } catch (err) {
+    // try root /health
+  }
+  try {
+    const resRoot = await fetch(`${ROOT_URL}/health`, { signal: AbortSignal.timeout(3000) });
+    if (resRoot.ok) return await resRoot.json();
   } catch (err) {
     console.warn('API health check error:', err);
-    return null;
   }
+  return null;
 }
 
 /**
