@@ -1,4 +1,11 @@
-from backend.app.api.deps import get_request_repo, get_workflow_service
+from backend.app.api.deps import (
+    get_classification_manager,
+    get_request_repo,
+    get_workflow_service,
+)
+from backend.app.api.schemas.classification import (
+    ClassificationResponse,
+)
 from backend.app.api.schemas.event import EventResponse, StatusUpdatePayload
 from backend.app.api.schemas.request import (
     RequestCreate,
@@ -12,6 +19,7 @@ from backend.app.models.enums import (
     RequestStatus,
 )
 from backend.app.repositories.request_repo import RequestRepository
+from backend.app.services.classification.manager import ClassificationManager
 from backend.app.services.workflow import InvalidStatusTransitionError, WorkflowService
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
@@ -89,6 +97,25 @@ def get_request_details(
             detail=f"Solicitação com ID '{request_id}' não encontrada.",
         )
     return req
+
+
+@router.post(
+    "/{request_id}/classify",
+    response_model=ClassificationResponse,
+    summary="Executar classificação automática da solicitação",
+)
+def classify_request(
+    request_id: str,
+    repo: RequestRepository = Depends(get_request_repo),
+    manager: ClassificationManager = Depends(get_classification_manager),
+):
+    req = repo.get_by_id(request_id)
+    if not req:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Solicitação com ID '{request_id}' não encontrada.",
+        )
+    return manager.classify_request(req)
 
 
 @router.patch(
