@@ -1,4 +1,5 @@
-from backend.app.api.deps import get_request_repo
+from backend.app.api.deps import get_request_repo, get_workflow_service
+from backend.app.api.schemas.event import EventResponse, StatusUpdatePayload
 from backend.app.api.schemas.request import (
     RequestCreate,
     RequestListResponse,
@@ -11,6 +12,7 @@ from backend.app.models.enums import (
     RequestStatus,
 )
 from backend.app.repositories.request_repo import RequestRepository
+from backend.app.services.workflow import InvalidStatusTransitionError, WorkflowService
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 router = APIRouter(prefix="/requests", tags=["Requests"])
@@ -87,3 +89,54 @@ def get_request_details(
             detail=f"Solicitação com ID '{request_id}' não encontrada.",
         )
     return req
+
+
+@router.patch(
+    "/{request_id}/status",
+    response_model=RequestResponse,
+    summary="Atualizar status do workflow da solicitação",
+)
+def update_request_status(
+    request_id: str,
+    payload: StatusUpdatePayload,
+    repo: RequestRepository = Depends(get_request_repo),
+    workflow: WorkflowService = Depends(get_workflow_service),
+):
+    req = repo.get_by_id(request_id)
+    if not req:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Solicitação com ID '{request_id}' não encontrada.",
+        )
+
+    try:
+        updated = workflow.transition_status(
+            request=req,
+            new_status=payload.new_status.value,
+            reason=payload.reason,
+            actor=payload.actor.value,
+        )
+        return updated
+    except InvalidStatusTransitionError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+
+
+@router.get(
+    "/{request_id}/events",
+    response_model=list[EventResponse],
+    summary="Listar histórico de eventos e auditoria da solicitação",
+)
+def get_request_events(
+    request_id: str,
+    repo: RequestRepository = Depends(get_request_repo),
+):
+    req = repo.get_by_id(request_id)
+    if not req:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Solicitação com ID '{request_id}' não encontrada.",
+        )
+    return repo.get_events(request_id)
