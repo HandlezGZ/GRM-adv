@@ -32,7 +32,11 @@ app.add_middleware(
 )
 
 
+api_router = APIRouter(prefix=settings.API_V1_STR)
+
+
 @app.get("/health", tags=["Health"])
+@api_router.get("/health", tags=["Health"])
 def health_check():
     return {
         "status": "healthy",
@@ -41,7 +45,6 @@ def health_check():
     }
 
 
-api_router = APIRouter(prefix=settings.API_V1_STR)
 api_router.include_router(datasets.router)
 api_router.include_router(prompts.router)
 api_router.include_router(eval.router)

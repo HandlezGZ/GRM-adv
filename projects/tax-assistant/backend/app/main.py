@@ -36,6 +36,7 @@ app.include_router(api_v1_router)
 
 
 @app.get("/health", tags=["Health"])
+@api_v1_router.get("/health", tags=["Health"])
 def health_check() -> dict:
     return {
         "status": "healthy",
