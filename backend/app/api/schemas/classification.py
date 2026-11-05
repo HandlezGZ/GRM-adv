@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from backend.app.models.enums import (
     ClassificationSource,
     RequestCategory,
@@ -46,3 +48,15 @@ class ReviewPayload(BaseModel):
     reviewer_name: str | None = Field(
         None, max_length=100, description="Nome fictício do analista revisor"
     )
+
+
+class ClassificationFailureResponse(BaseModel):
+    id: str
+    request_id: str
+    provider: str
+    source: str
+    error_type: str | None = None
+    duration_ms: float | None = None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
