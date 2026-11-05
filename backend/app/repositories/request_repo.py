@@ -144,3 +144,78 @@ class RequestRepository:
             .limit(limit)
         )
         return list(self.db.execute(stmt).scalars().all())
+
+    def get_dashboard_metrics(self) -> dict[str, Any]:
+        all_requests = list(self.db.execute(select(Request)).scalars().all())
+        total_requests = len(all_requests)
+
+        open_statuses = {
+            RequestStatus.NEW.value,
+            RequestStatus.TRIAGE.value,
+            RequestStatus.IN_PROGRESS.value,
+            RequestStatus.WAITING.value,
+        }
+
+        open_count = sum(1 for r in all_requests if r.status in open_statuses)
+        resolved_count = sum(
+            1 for r in all_requests if r.status == RequestStatus.RESOLVED.value
+        )
+        reviewed_count = sum(
+            1 for r in all_requests if r.classification_source == "human"
+        )
+
+        by_category: dict[str, int] = {}
+        by_priority: dict[str, int] = {}
+        by_status: dict[str, int] = {}
+
+        resolution_times_hours = []
+
+        for r in all_requests:
+            cat = r.category or "OTHER"
+            by_category[cat] = by_category.get(cat, 0) + 1
+
+            prio = r.priority or "NORMAL"
+            by_priority[prio] = by_priority.get(prio, 0) + 1
+
+            st = r.status or "NEW"
+            by_status[st] = by_status.get(st, 0) + 1
+
+            is_resolved = (
+                r.status == RequestStatus.RESOLVED.value
+                and r.resolved_at
+                and r.created_at
+            )
+            if is_resolved:
+                delta = (r.resolved_at - r.created_at).total_seconds() / 3600.0
+                if delta >= 0:
+                    resolution_times_hours.append(delta)
+
+        avg_res_hours = (
+            round(sum(resolution_times_hours) / len(resolution_times_hours), 2)
+            if resolution_times_hours
+            else None
+        )
+
+        failures_count = len(
+            list(
+                self.db.execute(
+                    select(ClassificationAttempt).where(
+                        ClassificationAttempt.success.is_(False)
+                    )
+                )
+                .scalars()
+                .all()
+            )
+        )
+
+        return {
+            "total_requests": total_requests,
+            "open_requests": open_count,
+            "resolved_requests": resolved_count,
+            "by_category": by_category,
+            "by_priority": by_priority,
+            "by_status": by_status,
+            "reviewed_count": reviewed_count,
+            "ai_failure_count": failures_count,
+            "avg_resolution_hours": avg_res_hours,
+        }
