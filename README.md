@@ -1,170 +1,112 @@
-# LexFlow --- Sistema de Automação e Triagem de Solicitações Internas
+# Legal Operations & AI Platform --- Monorepo
 
-> **LexFlow** é uma plataforma moderna e resiliente para recebimento, classificação automática, encaminhamento e auditoria de demandas e chamados internos em operações corporativas e jurídicas.
-
----
-
-## 1. Visão Geral
-
-Em operações corporativas com múltiplos departamentos, o recebimento descentralizado de solicitações (via mensagens instantâneas, e-mails ou canais informais) acarreta perda de rastreabilidade, triagem inconsistente, encaminhamento para equipes incorretas e falta de visibilidade sobre pendências e tempos de atendimento.
-
-O **LexFlow** resolve esse gargalo através de um fluxo digital integrado:
-- **Entrada Padronizada:** Cadastro com validação de esquema em tempo real via Pydantic v2.
-- **Classificação Determinística por Regras (`RulesClassifier`):** Motor local baseado em padrões e termos operacionais, sem dependência de serviços externos.
-- **Integração Opcional com IA (`LLMClassifier`):** Suporte a modelos generativos com saída estritamente estruturada em JSON e validação contra schema tipado.
-- **Resiliência e Fallback Automático:** Caso o provedor de IA apresente indisponibilidade, erro de rede ou timeout, o sistema aciona instantaneamente o motor de regras locais, registrando o incidente para auditoria sem interromper o serviço.
-- **Revisão Humana ("Human-in-the-Loop"):** A IA atua como assistente de triagem; os analistas operacionais têm autoridade total para revisar, confirmar ou ajustar categorias, equipes e prioridades com registro formal de justificativa.
-- **Workflow com Máquina de Estados:** Controle estrito de transições (`NEW` ➔ `TRIAGE` ➔ `IN_PROGRESS` ➔ `WAITING` ➔ `RESOLVED` / `CANCELLED`) com registro imutável de eventos (`RequestEvent`).
-- **Dashboard Operacional:** Interface interativa em Streamlit com métricas de volumetria, distribuição por categoria/prioridade e monitoramento de qualidade.
+> **Repositório Monorepo** consolidando o ecossistema integrado de soluções de automação de processos internos, avaliação contínua de IA e assistência especializada em documentos jurídicos.
 
 ---
 
-## 2. Princípios de Segurança e Privacidade
+## 1. Visão Geral da Plataforma
 
-1. **Dados Controlados:** A aplicação é concebida para operar com dados estruturados de demonstração e ambientes controlados.
-2. **Mitigação de Prompt Injection:** Todo conteúdo inserido pelo solicitante é tratado como dado não confiável. O prompt versionado instrui o classificador a ignorar instruções operacionais contidas na descrição da solicitação.
-3. **Gestão Segura de Configurações:** Variáveis de ambiente e credenciais são gerenciadas via `.env` (com modelo em `.env.example`), sem expor secrets no código.
-4. **Ausência de Efeitos Colaterais Externos:** A IA atua exclusivamente na inferência estruturada de categorias e equipes, sem permissão para executar comandos no sistema ou disparar comunicações externas descontroladas.
+Este repositório adota uma arquitetura monorepo modular para gerenciar soluções tecnológicas complementares voltadas à eficiência operacional e ao uso responsável de Inteligência Artificial:
 
----
-
-## 3. Arquitetura e Tecnologias
-
-```
-[Streamlit UI - Frontend]
-       │
-       ▼ (HTTP / REST JSON)
-[FastAPI REST API - Backend]
-       │
-       ├── [Workflow Service - Máquina de Estados]
-       │
-       ├── [Classification Service]
-       │      │
-       │      ├── [Rules Engine (Local & Determinístico)]
-       │      └── [Optional LLM Provider (Com Fallback)]
-       │
-       ├── [Audit & Event Logger]
-       │
-       ▼ (SQLAlchemy ORM)
-[Banco de Dados - SQLite / PostgreSQL]
+```text
+GRM-adv/
+├── Makefile                       # Orquestrador global de tarefas (testes, linting, execução)
+├── docker-compose.yml             # Orquestração unificada de containers
+├── README.md                      # Documentação central do monorepo
+├── .gitignore                     # Regras globais de exclusão
+│
+└── projects/
+    ├── lexflow/                   # Módulo 1: Automação e Triagem de Solicitações Internas
+    │   ├── backend/               # API FastAPI, Pydantic v2, SQLAlchemy, State Machine
+    │   ├── frontend/              # Interface Streamlit com dashboard e revisão humana
+    │   ├── scripts/               # Carga inicial de dados de demonstração
+    │   ├── Makefile               # Automação local do projeto
+    │   └── README.md              # Documentação técnica específica do LexFlow
+    │
+    ├── lexeval/                   # Módulo 2: Avaliação e Monitoramento de Qualidade de IA
+    │   └── README.md              # Especificação de benchmarking fático e detecção de alucinações
+    │
+    └── tax-assistant/             # Módulo 3: Assistente de Análise de Documentos Tributários
+        └── README.md              # Especificação de extração estruturada e Q&A fundamentado
 ```
 
-- **Backend:** Python 3.12+, FastAPI, Pydantic v2, Pydantic-Settings.
-- **Persistência:** SQLAlchemy 2.0 (SQLite para desenvolvimento ágil / PostgreSQL para produção).
-- **Frontend:** Streamlit com componentes analíticos e interface multi-página.
-- **Qualidade de Código:** Ruff (linter e formatador) e Pytest (31 testes automatizados).
-- **Containerização:** Docker Compose para orquestração de backend e frontend.
+---
+
+## 2. Módulos do Repositório
+
+### [1. LexFlow --- Automação e Triagem Interna](projects/lexflow/README.md)
+*Status: Operacional / Concluído*
+- **Finalidade:** Centralização, validação estrita e classificação de chamados operacionais.
+- **Destaques:** Motor híbrido de classificação (regras determinísticas + LLM opcional), fallback automático resiliente com zero indisponibilidade, máquina de estados com transições restritas e painel de revisão humana obrigatório (*Human-in-the-Loop*).
+- **Stack:** Python, FastAPI, Pydantic v2, SQLAlchemy, Streamlit.
+
+### [2. LexEval --- Avaliação e Observabilidade de IA](projects/lexeval/README.md)
+*Status: Especificado / Pronto para Implementação*
+- **Finalidade:** Plataforma contínua de benchmarking, validação de acurácia fática e detecção de alucinações em respostas de IA jurídica.
+- **Destaques:** Golden datasets com ground truth, métricas de fidelidade (*Faithfulness*), precisão de citações normativas, comparador A/B de versões de prompts e catálogo automatizado de falhas.
+
+### [3. TaxAssistant --- Análise de Documentos Tributários](projects/tax-assistant/README.md)
+*Status: Planejado*
+- **Finalidade:** Processamento de autos de infração, acórdãos e certidões com extração estruturada de tributos, alíquotas e obrigações, acompanhado de respostas fundamentadas em trechos originais.
 
 ---
 
-## 4. Como Executar
+## 3. Como Executar
 
-### Opção A: Ambiente Local com Python Virtualenv (Recomendado)
+### Ambiente Local com Python Virtualenv
 
-1. **Criar e ativar o ambiente virtual:**
+1. **Criar e ativar o ambiente virtual na raiz:**
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate  # No Windows: .venv\Scripts\activate
    ```
 
-2. **Instalar as dependências:**
+2. **Instalar dependências de todos os módulos ativos:**
    ```bash
-   pip install -r backend/requirements.txt -r frontend/requirements.txt
+   make install-all
    ```
 
-3. **Popular o banco com dados de demonstração:**
+3. **Popular dados de demonstração do LexFlow:**
    ```bash
-   python scripts/seed_demo_data.py
+   make seed-lexflow
    ```
 
-4. **Iniciar o Backend (FastAPI):**
-   ```bash
-   uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000
-   ```
-   *Documentação interativa Swagger:* [http://localhost:8000/docs](http://localhost:8000/docs)
-
-5. **Iniciar o Frontend (Streamlit) em outro terminal:**
-   ```bash
-   source .venv/bin/activate
-   streamlit run frontend/app.py --server.port 8501
-   ```
-   *Acesso à interface web:* [http://localhost:8501](http://localhost:8501)
+4. **Executar serviços do LexFlow:**
+   - **Backend API (FastAPI):**
+     ```bash
+     make run-lexflow-backend
+     ```
+     *Acesse a documentação Swagger:* [http://localhost:8000/docs](http://localhost:8000/docs)
+   - **Frontend (Streamlit):**
+     ```bash
+     make run-lexflow-frontend
+     ```
+     *Acesse o painel web:* [http://localhost:8501](http://localhost:8501)
 
 ---
 
-### Opção B: Execução via Docker Compose
+### Execução via Docker Compose
 
+Inicie todos os serviços da plataforma com portas isoladas:
 ```bash
 docker compose up --build -d
 ```
-- **Frontend (Streamlit):** [http://localhost:8501](http://localhost:8501)
-- **Backend API (Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)
+- **LexFlow Frontend:** [http://localhost:8501](http://localhost:8501)
+- **LexFlow Backend:** [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
 
-## 5. Testes Automatizados
+## 4. Testes e Qualidade
 
-O projeto conta com **31 testes automatizados** cobrindo integração de endpoints, regras de workflow, validação de schemas, resiliência de fallback e persistência.
+O repositório impõe padrões estritos de qualidade através de suítes de testes automatizados e formatação via Ruff:
 
 ```bash
-# Executar a suíte de testes
-pytest backend/tests -v
+# Executar testes em todos os projetos
+make test-all
 
-# Executar verificação de linting
-ruff check backend frontend scripts
-```
+# Executar testes específicos do LexFlow
+make test-lexflow
 
----
-
-## 6. Endpoints Principais da API REST (`/api/v1`)
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| `GET` | `/health` | Verificação de integridade e modo de classificação ativo |
-| `POST` | `/api/v1/requests` | Cadastra nova solicitação com validação estrita |
-| `GET` | `/api/v1/requests` | Lista e filtra solicitações (status, categoria, busca textual) |
-| `GET` | `/api/v1/requests/{id}` | Retorna detalhes completos de uma solicitação |
-| `POST` | `/api/v1/requests/{id}/classify` | Executa classificação automática (Regras ou IA) |
-| `POST` | `/api/v1/requests/{id}/review` | Registra revisão humana com justificativa obrigatória |
-| `PATCH` | `/api/v1/requests/{id}/status` | Atualiza status respeitando as transições permitidas |
-| `GET` | `/api/v1/requests/{id}/events` | Retorna histórico de auditoria e eventos |
-| `GET` | `/api/v1/dashboard/metrics` | Métricas consolidadas de volumetria e atendimento |
-| `GET` | `/api/v1/classification/failures` | Relatório de falhas e incidentes do classificador |
-
----
-
-## 7. Guia de Demonstração do Fluxo
-
-1. **Dashboard Operacional:** Acesse `http://localhost:8501` para visualizar o panorama de solicitações ativas, resolvidas e gráficos de distribuição.
-2. **Cadastro:** Na página **Nova Solicitação**, preencha o formulário e marque a opção de classificação imediata.
-3. **Triagem Automática:** Observe como o motor analisa o conteúdo, atribui categoria e equipe correspondente e justifica a decisão.
-4. **Revisão Humana:** Na página **Detalhes e Revisão**, utilize o painel de validação para ajustar parâmetros e registrar a justificativa formal do analista.
-5. **Máquina de Estados:** Altere o status de `TRIAGE` para `IN_PROGRESS` e acompanhe a evolução do chamado na **Trilha de Auditoria**.
-6. **Resiliência e Falhas:** Na página **Qualidade e Falhas**, inspecione o monitoramento de incidentes e a política de fallback determinístico.
-
----
-
-## 8. Estrutura do Repositório
-
-```text
-GRM-adv/
-├── backend/
-│   ├── app/
-│   │   ├── api/routes/          # Endpoints da API REST
-│   │   ├── core/                # Configurações e logging
-│   │   ├── db/                  # Conexão e inicialização do banco
-│   │   ├── models/              # Entidades SQLAlchemy (Request, Event, Attempt)
-│   │   ├── prompts/             # Templates versionados de prompt
-│   │   ├── repositories/        # Camada de persistência
-│   │   └── services/            # Classificadores (Rules, LLM) e Workflow
-│   └── tests/                   # Testes unitários e de integração
-├── frontend/
-│   ├── app.py                   # Dashboard principal Streamlit
-│   ├── pages/                   # Páginas da aplicação web
-│   └── utils.py                 # Cliente de integração com a API
-├── scripts/
-│   └── seed_demo_data.py        # Carga inicial de dados
-├── docker-compose.yml           # Orquestração de containers
-├── Makefile                     # Comandos de atalho para automação
-└── README.md                    # Documentação do projeto
+# Verificar linting e formatação em todos os projetos
+make lint-all
 ```

@@ -1,7 +1,8 @@
 services:
-  backend:
+  # Project 1: LexFlow (Process Automation & Request Triage)
+  lexflow-backend:
     build:
-      context: .
+      context: projects/lexflow
       dockerfile: backend/Dockerfile
     container_name: lexflow-backend
     ports:
@@ -15,17 +16,17 @@ services:
       - lexflow_data:/app
     restart: unless-stopped
 
-  frontend:
+  lexflow-frontend:
     build:
-      context: .
+      context: projects/lexflow
       dockerfile: frontend/Dockerfile
     container_name: lexflow-frontend
     ports:
       - "8501:8501"
     environment:
-      - BACKEND_URL=http://backend:8000
+      - BACKEND_URL=http://lexflow-backend:8000
     depends_on:
-      - backend
+      - lexflow-backend
     restart: unless-stopped
 
 volumes:
