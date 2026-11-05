@@ -5,6 +5,7 @@ from backend.app.api.deps import (
 )
 from backend.app.api.schemas.classification import (
     ClassificationResponse,
+    ReviewPayload,
 )
 from backend.app.api.schemas.event import EventResponse, StatusUpdatePayload
 from backend.app.api.schemas.request import (
@@ -13,7 +14,9 @@ from backend.app.api.schemas.request import (
     RequestResponse,
 )
 from backend.app.models.enums import (
+    ClassificationSource,
     EventActor,
+    EventType,
     RequestCategory,
     RequestPriority,
     RequestStatus,
@@ -116,6 +119,65 @@ def classify_request(
             detail=f"Solicitação com ID '{request_id}' não encontrada.",
         )
     return manager.classify_request(req)
+
+
+@router.post(
+    "/{request_id}/review",
+    response_model=RequestResponse,
+    summary="Revisar e confirmar classificação humana da solicitação",
+)
+def review_request_classification(
+    request_id: str,
+    payload: ReviewPayload,
+    repo: RequestRepository = Depends(get_request_repo),
+):
+    req = repo.get_by_id(request_id)
+    if not req:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Solicitação com ID '{request_id}' não encontrada.",
+        )
+
+    old_category = req.category
+    old_team = req.team
+    old_priority = req.priority
+
+    # Apply human changes
+    req.category = payload.category.value
+    req.team = payload.team.strip()
+    req.priority = payload.priority.value
+    req.classification_source = ClassificationSource.HUMAN.value
+    req.classification_confidence = 1.0
+    req.classification_reason = payload.review_reason.strip()
+
+    # If still NEW, advance to TRIAGE
+    if req.status == RequestStatus.NEW.value:
+        req.status = RequestStatus.TRIAGE.value
+
+    reviewer = payload.reviewer_name or "Analista de Triagem"
+    summary_text = (
+        f"Revisão humana por {reviewer}: {req.category} ({req.team}) "
+        f"- Prioridade: {req.priority}"
+    )
+
+    repo.add_event(
+        request_id=req.id,
+        event_type=EventType.CLASSIFICATION_REVIEWED.value,
+        actor=EventActor.HUMAN.value,
+        summary=summary_text,
+        metadata={
+            "old_category": old_category,
+            "new_category": req.category,
+            "old_team": old_team,
+            "new_team": req.team,
+            "old_priority": old_priority,
+            "new_priority": req.priority,
+            "review_reason": payload.review_reason,
+            "reviewer": reviewer,
+        },
+    )
+
+    return repo.update(req)
 
 
 @router.patch(
